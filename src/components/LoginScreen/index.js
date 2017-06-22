@@ -58,7 +58,7 @@ class LoginForm extends React.Component {
     render() {
         return (
             <div className="box">
-                <h1 className="title is-black">Login</h1>
+                <h1 className="title is-black">Welcome back!</h1>
                 <div className="field">
                     <label className="label">Username</label>
                     <p className="control">
