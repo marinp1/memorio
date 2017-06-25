@@ -19,6 +19,53 @@ class InformationBox extends React.Component {
 }
 
 class RegistrationForm extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            username: '',
+            password: '',
+            passwordConfirmation: '',
+            isValid: false
+        };
+
+        this.checkValidity = this.checkValidity.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
+        this.handlePasswordConfirmationChange = this.handlePasswordConfirmationChange.bind(this);
+        this.handleUsernameChange = this.handleUsernameChange.bind(this);
+    }
+
+    handleUsernameChange(e) {
+        e.preventDefault();
+        this.setState({username: e.target.value});
+        this.checkValidity(e.target.value, this.state.password, this.state.passwordConfirmation);
+    }
+
+    handlePasswordChange(e) {
+        e.preventDefault();
+        this.setState({password: e.target.value});
+        this.checkValidity(this.state.username, e.target.value, this.state.passwordConfirmation);
+    }
+
+    handlePasswordConfirmationChange(e) {
+        e.preventDefault();
+        this.setState({passwordConfirmation: e.target.value});
+        this.checkValidity(this.state.username, this.state.password, e.target.value);
+    }
+
+    checkValidity(username, password, passwordConfirmation) {
+        let newValidity = false;
+
+        if (username !== '' && password !== '') {
+            if (password === passwordConfirmation)  {
+                newValidity = true;
+            }
+        }
+
+        this.setState({isValid: newValidity});
+    }
+
     render() {
         return (
             <div className="box">
@@ -26,24 +73,24 @@ class RegistrationForm extends React.Component {
                 <div className="field">
                     <label className="label">Username</label>
                     <p className="control">
-                        <input className="input" type="text"/>
+                        <input onChange={this.handleUsernameChange} className="input" type="text"/>
                     </p>
                 </div>
                 <div className="field">
                     <label className="label">Password</label>
                     <p className="control">
-                        <input className="input" type="password"/>
+                        <input onChange={this.handlePasswordChange} className="input" type="password"/>
                     </p>
                 </div>
                 <div className="field">
                     <label className="label">Confirm password</label>
                     <p className="control">
-                        <input className="input" type="password"/>
+                        <input onChange={this.handlePasswordConfirmationChange} className="input" type="password"/>
                     </p>
                 </div>
                 <div className="field">
                     <p className="control">
-                        <button className="button is-info login-button">Register</button>
+                        <button disabled={!this.state.isValid} className="button is-info login-button">Register</button>
                     </p>
                 </div>
                 <Link to="/login" className="is-grey register-link">
@@ -55,6 +102,43 @@ class RegistrationForm extends React.Component {
 }
 
 class LoginForm extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            username: '',
+            password: '',
+            isValid: false
+        };
+
+        this.checkValidity = this.checkValidity.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
+        this.handleUsernameChange = this.handleUsernameChange.bind(this);
+    }
+
+    handleUsernameChange(e) {
+        e.preventDefault();
+        this.setState({username: e.target.value});
+        this.checkValidity(e.target.value, this.state.password);
+    }
+
+    handlePasswordChange(e) {
+        e.preventDefault();
+        this.setState({password: e.target.value});
+        this.checkValidity(this.state.username, e.target.value);
+    }
+
+    checkValidity(username, password) {
+        let newValidity = false;
+
+        if (username !== '' && password !== '') {
+            newValidity = true;
+        }
+
+        this.setState({isValid: newValidity});
+    }
+
     render() {
         return (
             <div className="box">
@@ -62,18 +146,18 @@ class LoginForm extends React.Component {
                 <div className="field">
                     <label className="label">Username</label>
                     <p className="control">
-                        <input className="input" type="text"/>
+                        <input onChange={this.handleUsernameChange} className="input" type="text"/>
                     </p>
                 </div>
                 <div className="field">
                     <label className="label">Password</label>
                     <p className="control">
-                        <input className="input" type="password"/>
+                        <input onChange={this.handlePasswordChange} className="input" type="password"/>
                     </p>
                 </div>
                 <div className="field">
                     <p className="control">
-                        <button className="button is-info login-button">Login</button>
+                        <button disabled={!this.state.isValid} className="button is-info login-button">Login</button>
                     </p>
                 </div>
                 <Link to="/register" className="is-grey register-link">
