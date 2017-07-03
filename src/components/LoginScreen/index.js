@@ -1,5 +1,6 @@
 import React from 'react';
 import {withRouter, Link} from 'react-router-dom';
+import * as validators from './validators';
 
 require('./style.scss');
 
@@ -18,6 +19,93 @@ class InformationBox extends React.Component {
     }
 }
 
+class InputField extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.getErrorMessage = this.getErrorMessage.bind(this);
+    }
+
+    getErrorMessage(title, formContent) {
+        if (title === "Username") {
+            return "Username must be at least 4 characters long.";
+        } else if (title === "Password") {
+            return "Password must be at least 6 characters long.";
+        } else if (title === "Confirm password") {
+            return "Password do not match.";
+        }
+    }
+
+    render() {
+
+        let statusClasses = '';
+
+        if (this.props.status === 'warning') {
+            statusClasses += ' is-danger';
+        } else if (this.props.status === 'success') {
+            statusClasses += ' is-success';
+        }
+
+        if (this.props.status !== 'warning') {
+            return (
+                <div className="field">
+                    <label className="label">{this.props.title}</label>
+                    <InputFieldInput icon={this.props.icon} handleEvent={this.props.handleEvent}
+                        type={this.props.type} status={this.props.status} statusClasses={statusClasses}/>
+                </div>
+            );
+        } else {
+            return (
+                <div className="field">
+                    <label className="label">{this.props.title}</label>
+                    <InputFieldInput icon={this.props.icon} handleEvent={this.props.handleEvent}
+                        type={this.props.type} status={this.props.status} statusClasses={statusClasses}/>
+                    <InputFieldHelperText status={this.props.status} statusClasses={statusClasses} message={this.getErrorMessage(this.props.title, this.props.formContent)}/>
+                </div>
+            );
+        }
+    }
+
+}
+
+class InputFieldHelperText extends React.Component {
+    render() {
+
+        let helpClasses = "help";
+
+        return (
+            <p className={helpClasses + " " + this.props.statusClasses}>
+                {this.props.message}
+            </p>
+        );
+    }
+}
+
+class InputFieldInput extends React.Component {
+
+    render() {
+
+        let mainClasses = 'control has-icons-left';
+        let inputClasses = 'input';
+
+        if (this.props.status !== 'none') {
+            mainClasses += ' has-icons-right';
+        }
+
+        let iconClassName = 'fa ' + this.props.icon;
+
+        return (
+            <p className={mainClasses}>
+                <input onChange={this.props.handleEvent} className={inputClasses + ' ' + this.props.statusClasses} type={this.props.type}/>
+                <span className="icon is-small is-left">
+                        <i className={iconClassName}></i>
+                </span>
+            </p>
+        );
+    }
+
+}
+
 class RegistrationForm extends React.Component {
 
     constructor(props) {
@@ -30,7 +118,6 @@ class RegistrationForm extends React.Component {
             isValid: false
         };
 
-        this.checkValidity = this.checkValidity.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
         this.handlePasswordConfirmationChange = this.handlePasswordConfirmationChange.bind(this);
         this.handleUsernameChange = this.handleUsernameChange.bind(this);
@@ -39,30 +126,21 @@ class RegistrationForm extends React.Component {
     handleUsernameChange(e) {
         e.preventDefault();
         this.setState({username: e.target.value});
-        this.checkValidity(e.target.value, this.state.password, this.state.passwordConfirmation);
+        let newValidity = validators.validateRegistrationform(e.target.value, this.state.password, this.state.passwordConfirmation);
+        this.setState({isValid: newValidity});
     }
 
     handlePasswordChange(e) {
         e.preventDefault();
         this.setState({password: e.target.value});
-        this.checkValidity(this.state.username, e.target.value, this.state.passwordConfirmation);
+        let newValidity = validators.validateRegistrationform(this.state.username, e.target.value, this.state.passwordConfirmation);
+        this.setState({isValid: newValidity});
     }
 
     handlePasswordConfirmationChange(e) {
         e.preventDefault();
         this.setState({passwordConfirmation: e.target.value});
-        this.checkValidity(this.state.username, this.state.password, e.target.value);
-    }
-
-    checkValidity(username, password, passwordConfirmation) {
-        let newValidity = false;
-
-        if (username !== '' && password !== '') {
-            if (password === passwordConfirmation)  {
-                newValidity = true;
-            }
-        }
-
+        let newValidity = validators.validateRegistrationform(this.state.username, this.state.password, e.target.value);
         this.setState({isValid: newValidity});
     }
 
@@ -70,24 +148,12 @@ class RegistrationForm extends React.Component {
         return (
             <div className="box">
                 <h1 className="title is-black">Create a new account</h1>
-                <div className="field">
-                    <label className="label">Username</label>
-                    <p className="control">
-                        <input onChange={this.handleUsernameChange} className="input" type="text"/>
-                    </p>
-                </div>
-                <div className="field">
-                    <label className="label">Password</label>
-                    <p className="control">
-                        <input onChange={this.handlePasswordChange} className="input" type="password"/>
-                    </p>
-                </div>
-                <div className="field">
-                    <label className="label">Confirm password</label>
-                    <p className="control">
-                        <input onChange={this.handlePasswordConfirmationChange} className="input" type="password"/>
-                    </p>
-                </div>
+                <InputField title="Username" icon="fa-user" handleEvent={this.handleUsernameChange} type="text"
+                    status={validators.checkUsernameFieldStatus(this.state.username)} formContent={this.state}/>
+                <InputField title="Password" icon="fa-lock" handleEvent={this.handlePasswordChange} type="password"
+                    status={validators.checkPasswordFieldStatus(false, this.state.password, this.state.passwordConfirmation)} formContent={this.state}/>
+                <InputField title="Confirm password" icon="fa-lock" handleEvent={this.handlePasswordConfirmationChange} type="password"
+                    status={validators.checkPasswordFieldStatus(true, this.state.password, this.state.passwordConfirmation)} formContent={this.state}/>
                 <div className="field">
                     <p className="control">
                         <button disabled={!this.state.isValid} className="button is-info login-button">Register</button>
@@ -112,49 +178,34 @@ class LoginForm extends React.Component {
             isValid: false
         };
 
-        this.checkValidity = this.checkValidity.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
         this.handleUsernameChange = this.handleUsernameChange.bind(this);
     }
 
     handleUsernameChange(e) {
         e.preventDefault();
-        this.setState({username: e.target.value});
-        this.checkValidity(e.target.value, this.state.password);
+        this.setState({
+            username: e.target.value,
+            isValid: e.target.value !== '' && this.state.password !== ''
+        });
     }
 
     handlePasswordChange(e) {
         e.preventDefault();
-        this.setState({password: e.target.value});
-        this.checkValidity(this.state.username, e.target.value);
-    }
-
-    checkValidity(username, password) {
-        let newValidity = false;
-
-        if (username !== '' && password !== '') {
-            newValidity = true;
-        }
-
-        this.setState({isValid: newValidity});
+        this.setState({
+            password: e.target.value,
+            isValid: this.state.username !== '' && e.target.value !== ''
+        });
     }
 
     render() {
         return (
             <div className="box">
                 <h1 className="title is-black">Welcome back!</h1>
-                <div className="field">
-                    <label className="label">Username</label>
-                    <p className="control">
-                        <input onChange={this.handleUsernameChange} className="input" type="text"/>
-                    </p>
-                </div>
-                <div className="field">
-                    <label className="label">Password</label>
-                    <p className="control">
-                        <input onChange={this.handlePasswordChange} className="input" type="password"/>
-                    </p>
-                </div>
+                <InputField title="Username" icon="fa-user" handleEvent={this.handleUsernameChange} type="text"
+                    status='none'/>
+                <InputField title="Password" icon="fa-lock" handleEvent={this.handlePasswordChange} type="password"
+                    status='none'/>
                 <div className="field">
                     <p className="control">
                         <button disabled={!this.state.isValid} className="button is-info login-button">Login</button>
