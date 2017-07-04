@@ -6,7 +6,7 @@ export function validateUserName(username) {
   return username.length > 3;
 }
 
-export function validateRegistrationform(username, password, passwordConfirmation) {
+function validateRegistrationform(username, password, passwordConfirmation) {
   if (validateUserName(username) && validatePassword(password)) {
     if (password === passwordConfirmation) {
       return true;
@@ -14,6 +14,16 @@ export function validateRegistrationform(username, password, passwordConfirmatio
   }
 
   return false;
+}
+
+export function isFormValid(state, overrideKey, overrideValue) {
+  const newState = { ...state };
+  newState[overrideKey] = overrideValue;
+  return validateRegistrationform(
+    newState.username,
+    newState.password,
+    newState.passwordConfirmation,
+  );
 }
 
 export function checkPasswordFieldStatus(isRetype, password, passwordConfirmation) {

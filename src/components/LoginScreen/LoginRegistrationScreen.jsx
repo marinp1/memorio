@@ -25,5 +25,5 @@ export default class LoginRegistrationScreen extends React.Component {
 }
 
 LoginRegistrationScreen.propTypes = {
-  location: PropTypes.shape.isRequired,
+  location: PropTypes.string.isRequired,
 };

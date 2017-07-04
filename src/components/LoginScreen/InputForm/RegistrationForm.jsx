@@ -15,44 +15,15 @@ export default class RegistrationForm extends React.Component {
       isValid: false,
     };
 
-    this.handlePasswordChange = this.handlePasswordChange.bind(this);
-    this.handlePasswordConfirmationChange = this.handlePasswordConfirmationChange.bind(this);
-    this.handleUsernameChange = this.handleUsernameChange.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  handleUsernameChange(e) {
+  handleInputChange(e, id) {
     e.preventDefault();
-    this.setState({ username: e.target.value });
-    const newValidity =
-            validators.validateRegistrationform(
-                e.target.value,
-                this.state.password,
-                this.state.passwordConfirmation,
-            );
-    this.setState({ isValid: newValidity });
-  }
-
-  handlePasswordChange(e) {
-    e.preventDefault();
-    this.setState({ password: e.target.value });
-    const newValidity =
-            validators.validateRegistrationform(
-                this.state.username, e.target.value,
-                this.state.passwordConfirmation,
-            );
-    this.setState({ isValid: newValidity });
-  }
-
-  handlePasswordConfirmationChange(e) {
-    e.preventDefault();
-    this.setState({ passwordConfirmation: e.target.value });
-    const newValidity =
-        validators.validateRegistrationform(
-            this.state.username,
-            this.state.password,
-            e.target.value,
-        );
-    this.setState({ isValid: newValidity });
+    this.setState({
+      [id]: e.target.value,
+      isValid: validators.isFormValid(this.state, id, e.target.value),
+    });
   }
 
   render() {
@@ -62,14 +33,14 @@ export default class RegistrationForm extends React.Component {
         <InputField
           title="Username"
           icon="fa-user"
-          handleEvent={this.handleUsernameChange}
+          handleEvent={e => this.handleInputChange(e, 'username')}
           type="text"
           status={validators.checkUsernameFieldStatus(this.state.username)}
         />
         <InputField
           title="Password"
           icon="fa-lock"
-          handleEvent={this.handlePasswordChange}
+          handleEvent={e => this.handleInputChange(e, 'password')}
           type="password"
           status={validators.checkPasswordFieldStatus(
                         false,
@@ -80,7 +51,7 @@ export default class RegistrationForm extends React.Component {
         <InputField
           title="Confirm password"
           icon="fa-lock"
-          handleEvent={this.handlePasswordConfirmationChange}
+          handleEvent={e => this.handleInputChange(e, 'passwordConfirmation')}
           type="password"
           status={validators.checkPasswordFieldStatus(
                         true,
