@@ -1,23 +1,6 @@
 import React from 'react';
-import { Route, HashRouter as Router, Switch, Redirect } from 'react-router-dom';
-import LoginRegistrationScreen from './components/LoginScreen';
-
-class Content extends React.Component {
-  render() {
-    return (
-      <Switch>
-        <Route path="/register" component={LoginRegistrationScreen} />
-        <Route path="/login" component={LoginRegistrationScreen} />
-        <Route
-          path="*"
-          render={() => (
-            <Redirect to="/register" />
-                    )}
-        />
-      </Switch>
-    );
-  }
-}
+import { HashRouter as Router } from 'react-router-dom';
+import Content from './components/Content';
 
 class Main extends React.Component {
   render() {
