@@ -5,16 +5,16 @@ import LoginRegistrationScreen from './components/LoginScreen';
 class Content extends React.Component {
   render() {
     return (
-        <Switch>
-            <Route path="/register" component={LoginRegistrationScreen} />
-            <Route path="/login" component={LoginRegistrationScreen} />
-            <Route
-                path="*"
-                render={() => (
-                    <Redirect to="/register" />
+      <Switch>
+        <Route path="/register" component={LoginRegistrationScreen} />
+        <Route path="/login" component={LoginRegistrationScreen} />
+        <Route
+          path="*"
+          render={() => (
+            <Redirect to="/register" />
                     )}
-            />
-        </Switch>
+        />
+      </Switch>
     );
   }
 }
@@ -22,9 +22,9 @@ class Content extends React.Component {
 class Main extends React.Component {
   render() {
     return (
-        <Router>
-            <Content />
-        </Router>
+      <Router>
+        <Content />
+      </Router>
     );
   }
 }
