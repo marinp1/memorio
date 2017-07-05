@@ -9,10 +9,15 @@ class RegistrationForm extends React.Component {
   constructor(props) {
     super(props);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleInputChange(id, value) {
     this.props.handleInputChange(id, value);
+  }
+
+  handleSubmit() {
+    this.props.handleSubmit(this.props.form);
   }
 
   render() {
@@ -24,6 +29,7 @@ class RegistrationForm extends React.Component {
           icon="fa-user"
           handleEvent={e => this.handleInputChange('USERNAME', e.target.value)}
           type="text"
+          value={this.props.form.username.text}
           status={this.props.form.username.status}
         />
         <InputField
@@ -31,6 +37,7 @@ class RegistrationForm extends React.Component {
           icon="fa-lock"
           handleEvent={e => this.handleInputChange('PASSWORD', e.target.value)}
           type="password"
+          value={this.props.form.password.text}
           status={this.props.form.password.status}
         />
         <InputField
@@ -38,12 +45,17 @@ class RegistrationForm extends React.Component {
           icon="fa-lock"
           handleEvent={e => this.handleInputChange('PASSWORD_CONFIRMATION', e.target.value)}
           type="password"
+          value={this.props.form.passwordConfirmation.text}
           status={this.props.form.passwordConfirmation.status}
         />
         <div className="field">
           <p className="control">
-            <button disabled={!this.props.form.valid} className="button is-info login-button">
-              Register
+            <button
+              disabled={!this.props.form.valid}
+              className="button is-info login-button"
+              onClick={this.handleSubmit}
+            >
+                Register
             </button>
           </p>
         </div>
@@ -58,6 +70,7 @@ class RegistrationForm extends React.Component {
 RegistrationForm.propTypes = {
   form: PropTypes.object.isRequired,
   handleInputChange: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -70,6 +83,11 @@ const mapDispatchToProps = dispatch => ({
     dispatch({
       type,
       text,
+    });
+  },
+  handleSubmit: () => {
+    dispatch({
+      type: 'REGISTRATION_CLEAR',
     });
   },
 });

@@ -18,6 +18,7 @@ export default class InputFieldInput extends React.Component {
           onChange={this.props.handleEvent}
           className={`${inputClasses} ${this.props.statusClasses}`}
           type={this.props.type}
+          value={this.props.value}
         />
         <span className="icon is-small is-left">
           <i className={iconClassName} />
@@ -32,5 +33,6 @@ InputFieldInput.propTypes = {
   icon: PropTypes.string.isRequired,
   handleEvent: PropTypes.func.isRequired,
   type: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
   statusClasses: PropTypes.string.isRequired,
 };

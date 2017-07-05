@@ -27,10 +27,24 @@ function getStatusField(fieldContent) {
 
 function getModifiedField(id, oldState) {
   const newState = oldState;
-  newState[[id]].valid = validateComponent(id, newState);
-  newState[[id]].status = getStatusField(newState[[id]]);
+  newState[id].valid = validateComponent(id, newState);
+  newState[id].status = getStatusField(newState[id]);
   newState.valid = validateComponent('form', newState);
   return newState;
+}
+
+function getEmptyState(state) {
+  const blocksToClean = ['username', 'password', 'passwordConfirmation'];
+
+  blocksToClean.forEach((block) => {
+    state[block].text = '';
+    state[block].valid = false;
+    state[block].status = 'none';
+  });
+
+  state.valid = false;
+
+  return state;
 }
 
 export default function RegistrationForm(state = defaultRegistationForm, action) {
@@ -49,7 +63,7 @@ export default function RegistrationForm(state = defaultRegistationForm, action)
       state = getModifiedField('passwordConfirmation', state);
       return { ...state };
     case 'REGISTRATION_CLEAR':
-      state = defaultRegistationForm;
+      state = getEmptyState(state);
       return { ...state };
     default:
       return state;

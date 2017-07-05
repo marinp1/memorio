@@ -12,11 +12,11 @@ const store = createStore(reducers);
 class App extends React.Component {
   render() {
     return (
-      <Provider store={store}>
-        <Router>
+      <Router>
+        <Provider store={store}>
           <Content />
-        </Router>
-      </Provider>
+        </Provider>
+      </Router>
     );
   }
 }

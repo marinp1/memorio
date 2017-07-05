@@ -35,6 +35,7 @@ export default class InputField extends React.Component {
             type={this.props.type}
             status={this.props.status}
             statusClasses={statusClasses}
+            value={this.props.value}
           />
         </div>
       );
@@ -48,6 +49,7 @@ export default class InputField extends React.Component {
           type={this.props.type}
           status={this.props.status}
           statusClasses={statusClasses}
+          value={this.props.value}
         />
         <HelperText
           status={this.props.status}
@@ -65,4 +67,5 @@ InputField.propTypes = {
   icon: PropTypes.string.isRequired,
   handleEvent: PropTypes.func.isRequired,
   type: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
 };

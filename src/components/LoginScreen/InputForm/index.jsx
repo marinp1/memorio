@@ -5,33 +5,8 @@ import RegistrationForm from './RegistrationForm';
 
 export default class InputForm extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      activeForm: 'registration',
-      currentRoute: '/register',
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.currentRoute !== this.state.currentRoute) {
-      this.toggleActiveForm();
-      this.setState({
-        currentRoute: nextProps.currentRoute,
-      });
-    }
-  }
-
-  toggleActiveForm() {
-    if (this.state.activeForm === 'registration') {
-      this.setState({ activeForm: 'login' });
-    } else {
-      this.setState({ activeForm: 'registration' });
-    }
-  }
-
   render() {
-    if (this.state.activeForm === 'registration') {
+    if (this.props.currentRoute === '/register') {
       return <RegistrationForm />;
     }
     return <LoginForm />;
