@@ -1,29 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import * as validators from './validators';
+import { connect } from 'react-redux';
+import { PropTypes } from 'prop-types';
 import InputField from './InputField';
 
-export default class RegistrationForm extends React.Component {
+class RegistrationForm extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      username: '',
-      password: '',
-      passwordConfirmation: '',
-      isValid: false,
-    };
-
     this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  handleInputChange(e, id) {
-    e.preventDefault();
-    this.setState({
-      [id]: e.target.value,
-      isValid: validators.isFormValid(this.state, id, e.target.value),
-    });
+  handleInputChange(id, value) {
+    this.props.handleInputChange(id, value);
   }
 
   render() {
@@ -33,35 +22,27 @@ export default class RegistrationForm extends React.Component {
         <InputField
           title="Username"
           icon="fa-user"
-          handleEvent={e => this.handleInputChange(e, 'username')}
+          handleEvent={e => this.handleInputChange('USERNAME', e.target.value)}
           type="text"
-          status={validators.checkUsernameFieldStatus(this.state.username)}
+          status={this.props.form.username.status}
         />
         <InputField
           title="Password"
           icon="fa-lock"
-          handleEvent={e => this.handleInputChange(e, 'password')}
+          handleEvent={e => this.handleInputChange('PASSWORD', e.target.value)}
           type="password"
-          status={validators.checkPasswordFieldStatus(
-                        false,
-                        this.state.password,
-                        this.state.passwordConfirmation,
-                    )}
+          status={this.props.form.password.status}
         />
         <InputField
           title="Confirm password"
           icon="fa-lock"
-          handleEvent={e => this.handleInputChange(e, 'passwordConfirmation')}
+          handleEvent={e => this.handleInputChange('PASSWORD_CONFIRMATION', e.target.value)}
           type="password"
-          status={validators.checkPasswordFieldStatus(
-                        true,
-                        this.state.password,
-                        this.state.passwordConfirmation,
-                    )}
+          status={this.props.form.passwordConfirmation.status}
         />
         <div className="field">
           <p className="control">
-            <button disabled={!this.state.isValid} className="button is-info login-button">
+            <button disabled={!this.props.form.valid} className="button is-info login-button">
               Register
             </button>
           </p>
@@ -73,3 +54,27 @@ export default class RegistrationForm extends React.Component {
     );
   }
 }
+
+RegistrationForm.propTypes = {
+  form: PropTypes.object.isRequired,
+  handleInputChange: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => ({
+  form: state.RegistrationScreen,
+});
+
+const mapDispatchToProps = dispatch => ({
+  handleInputChange: (id, text) => {
+    const type = `REGISTRATION_UPDATE_${id}`;
+    dispatch({
+      type,
+      text,
+    });
+  },
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(RegistrationForm);

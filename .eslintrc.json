@@ -6,9 +6,11 @@
     },
     "rules": {
         "max-len": [1, 100],
+        "no-param-reassign": 0,
         "react/prefer-stateless-function": [0],
         "react/jsx-max-props-per-line": [1, { "when": "multiline" }],
         "react/no-multi-comp": [0],
+        "react/forbid-prop-types": [0],
         "jsx-a11y/label-has-for": [0]
     }
 }

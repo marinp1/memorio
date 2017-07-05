@@ -1,36 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { PropTypes } from 'prop-types';
 import InputField from './InputField';
 
-export default class LoginForm extends React.Component {
+class LoginForm extends React.Component {
 
   constructor(props) {
     super(props);
 
-    this.state = {
-      username: '',
-      password: '',
-      isValid: false,
-    };
-
-    this.handlePasswordChange = this.handlePasswordChange.bind(this);
-    this.handleUsernameChange = this.handleUsernameChange.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  handleUsernameChange(e) {
-    e.preventDefault();
-    this.setState({
-      username: e.target.value,
-      isValid: e.target.value !== '' && this.state.password !== '',
-    });
-  }
-
-  handlePasswordChange(e) {
-    e.preventDefault();
-    this.setState({
-      password: e.target.value,
-      isValid: this.state.username !== '' && e.target.value !== '',
-    });
+  handleInputChange(id, value) {
+    this.props.handleInputChange(id, value);
   }
 
   render() {
@@ -40,28 +23,52 @@ export default class LoginForm extends React.Component {
         <InputField
           title="Username"
           icon="fa-user"
-          handleEvent={this.handleUsernameChange}
+          handleEvent={e => this.handleInputChange('USERNAME', e.target.value)}
           type="text"
           status="none"
         />
         <InputField
           title="Password"
           icon="fa-lock"
-          handleEvent={this.handlePasswordChange}
+          handleEvent={e => this.handleInputChange('PASSWORD', e.target.value)}
           type="password"
           status="none"
         />
         <div className="field">
           <p className="control">
-            <button disabled={!this.state.isValid} className="button is-info login-button">
+            <button disabled={!this.props.form.valid} className="button is-info login-button">
               Login
             </button>
           </p>
         </div>
         <Link to="/register" className="is-grey register-link">
-          Don{"''"}t have an account? Register here.
+          Don{"'"}t have an account? Register here.
         </Link>
       </div>
     );
   }
 }
+
+LoginForm.propTypes = {
+  form: PropTypes.object.isRequired,
+  handleInputChange: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => ({
+  form: state.LoginScreen,
+});
+
+const mapDispatchToProps = dispatch => ({
+  handleInputChange: (id, text) => {
+    const type = `LOGIN_UPDATE_${id}`;
+    dispatch({
+      type,
+      text,
+    });
+  },
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(LoginForm);
