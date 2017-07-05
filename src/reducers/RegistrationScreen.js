@@ -1,4 +1,4 @@
-import * as validators from '../validators/RegistrationScreen';
+import validateComponent from '../validators/RegistrationScreen';
 
 const defaultRegistationForm = {
   username: {
@@ -25,33 +25,28 @@ function getStatusField(fieldContent) {
   return 'success';
 }
 
+function getModifiedField(id, oldState) {
+  const newState = oldState;
+  newState[[id]].valid = validateComponent(id, newState);
+  newState[[id]].status = getStatusField(newState[[id]]);
+  newState.valid = validateComponent('form', newState);
+  return newState;
+}
+
 export default function RegistrationForm(state = defaultRegistationForm, action) {
   switch (action.type) {
     case 'REGISTRATION_UPDATE_USERNAME':
       state.username.text = action.text;
-      state.username.valid = validators.validateUsername(action.text);
-      state.username.status = getStatusField(state.username);
-      state.valid = validators.validateRegistrationForm(state);
+      state = getModifiedField('username', state);
       return { ...state };
     case 'REGISTRATION_UPDATE_PASSWORD':
       state.password.text = action.text;
-      state.password.valid = validators.validatePassword(action.text);
-      state.passwordConfirmation.valid = validators.validatePasswordConfirmation(
-        action.text,
-        state.passwordConfirmation.text,
-      );
-      state.password.status = getStatusField(state.password);
-      state.passwordConfirmation.status = getStatusField(state.passwordConfirmation);
-      state.valid = validators.validateRegistrationForm(state);
+      state = getModifiedField('password', state);
+      state = getModifiedField('passwordConfirmation', state);
       return { ...state };
     case 'REGISTRATION_UPDATE_PASSWORD_CONFIRMATION':
       state.passwordConfirmation.text = action.text;
-      state.passwordConfirmation.valid = validators.validatePasswordConfirmation(
-        state.password.text,
-        action.text,
-      );
-      state.passwordConfirmation.status = getStatusField(state.passwordConfirmation);
-      state.valid = validators.validateRegistrationForm(state);
+      state = getModifiedField('passwordConfirmation', state);
       return { ...state };
     case 'REGISTRATION_CLEAR':
       state = defaultRegistationForm;
