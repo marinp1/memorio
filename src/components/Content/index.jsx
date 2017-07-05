@@ -7,6 +7,11 @@ import LoggedOutContent from './LoggedOutContent';
 
 class Content extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.props.handleRouteChange(props.location.pathname);
+  }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.location.pathname !== this.props.location.pathname) {
       this.props.handleRouteChange(nextProps.location.pathname);

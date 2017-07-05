@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const StatsPlugin = require('stats-webpack-plugin');
 
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   template: './client/index_template.html',
@@ -16,7 +17,7 @@ module.exports = {
   ],
   output: {
     path: path.join(__dirname, '/dist'),
-    filename: '[name].js',
+    filename: '[name]-[hash].min.js',
     publicPath: '/',
   },
   module: {
@@ -39,12 +40,20 @@ module.exports = {
     extensions: ['.js', '.jsx'],
   },
   plugins: [
-    HtmlWebpackPluginConfig,
     new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
+    HtmlWebpackPluginConfig,
+    new webpack.optimize.UglifyJsPlugin({
+      compressor: {
+        warnings: false,
+        screw_ie8: true,
+      },
+    }),
+    new StatsPlugin('webpack.stats.json', {
+      source: false,
+      modules: false,
+    }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('development'),
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     }),
   ],
 };
