@@ -47,4 +47,7 @@ module.exports = {
       'process.env.NODE_ENV': JSON.stringify('development'),
     }),
   ],
+  node: {
+    fs: 'empty',
+  },
 };

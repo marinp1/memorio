@@ -1,3 +1,16 @@
+import { getUser } from '../db';
+
+function login(username, password) {
+  return new Promise((resolve, reject) => {
+    const validUsername = getUser(username, password);
+    if (validUsername !== false) {
+      resolve(username);
+    } else {
+      reject('Invalid username/password combination');
+    }
+  });
+}
+
 const defaultLoginForm = {
   username: {
     text: '',
@@ -36,6 +49,16 @@ export default function LoginForm(state = defaultLoginForm, action) {
     case 'LOGIN_CLEAR':
       state = getEmptyState(state);
       return { ...state };
+    case 'LOGIN_SUBMIT': {
+      login(state.username.text, state.password.text).then((username) => {
+        action.asyncDispatch({
+          type: 'GENERAL_LOGIN', text: username,
+        });
+      }).catch((error) => {
+        console.log(error);
+      });
+      return state;
+    }
     default:
       return state;
   }

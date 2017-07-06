@@ -17,7 +17,7 @@ class LoginForm extends React.Component {
   }
 
   handleSubmit() {
-    this.props.handleSubmit(this.props.form);
+    this.props.handleSubmit();
   }
 
   render() {
@@ -79,7 +79,7 @@ const mapDispatchToProps = dispatch => ({
   },
   handleSubmit: () => {
     dispatch({
-      type: 'LOGIN_CLEAR',
+      type: 'LOGIN_SUBMIT',
     });
   },
 });
